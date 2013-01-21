@@ -1,0 +1,22 @@
+<package>
+  <description brief="Hardware interface for mobile plattform Slider and robot arm Mover4 by Commonplace Robotics.">
+
+     This node reads the keyboard and generates Twist and/or JointState messeges in a 
+     10 Hz loop. For the slider the keys are ws for forward/backward, ad for turn left/right
+     and qe for lateral motion which is possible due to the mecanum drive. 
+
+     This node can be tested together with the teleop node in package cpr_robots_teleop. 
+     There you can also find a .launch file. 
+
+  </description>
+  <author>christian.meyer@cpr-robots.com</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/cpr_robots_hwinterface</url>
+  <depend package="roslib"/>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+
+</package>
+
+

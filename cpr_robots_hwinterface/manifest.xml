@@ -1,0 +1,22 @@
+<package>
+  <description brief="Hardware interface for mobile plattform Slider and robot arm Mover4 by Commonplace Robotics.">
+
+     This node subscribes to twist messages for the mobile platform slider. It 
+     converts the velocities of theses messages into joint velocities for the 
+     mecanum drive. These joint velocities are forwarded to the CAN bus.
+
+     This node can be tested together with the teleop node in package cpr_robots_teleop. 
+     There you can also find a .launch file. 
+
+  </description>
+  <author>christian.meyer@cpr-robots.com</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/cpr_robots_hwinterface</url>
+  <depend package="roslib"/>
+  <depend package="roscpp"/>
+  <depend package="std_msgs"/>
+
+</package>
+
+

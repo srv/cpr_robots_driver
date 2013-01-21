@@ -1,0 +1,24 @@
+<stack>
+  <description brief="Hardware drivers and teleop for the Commonplace Robotics robot arm Mover4 and mobile platform Slider ">
+
+    This stack contains hardware drivers, urdf files and keyboard teleop for the 
+    Commonplace Robotics robots: robot arm Mover4 and mobile platform Slider, see:
+    <a href="http://www.cpr-robots.com">www.cpr-robots.com</a>. 
+
+    Specifically, it provides in package cpr_robots_hwinterface:
+    <ul>
+      <li>node CPRKinSlider to connect with the Slider hardware</li>
+    </ul>
+
+    The package cpr_robots_teleop contains:
+    <ul>
+ 	<li> node CPRTeleopKeyboard to allow testing the robot</li>
+    </ul>
+
+  </description>
+  <author>Maintained by christian.meyer@cpr-robots.com</author>
+  <license>GPL</license>  
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/cpr_robots_driver</url>
+  <depend stack="ros" />
+</stack>

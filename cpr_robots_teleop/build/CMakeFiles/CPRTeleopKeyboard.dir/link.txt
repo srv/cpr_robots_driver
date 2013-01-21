@@ -1,0 +1,1 @@
+/usr/bin/c++   -O2 -g     -pthread CMakeFiles/CPRTeleopKeyboard.dir/src/cpr_ctrl_loop.o CMakeFiles/CPRTeleopKeyboard.dir/src/cpr_teleop_keyboard.o  -o ../bin/CPRTeleopKeyboard -rdynamic -L/opt/ros/fuerte/lib -lroslib -lroscpp -lrostime -lrosconsole -lroscpp_serialization -lxmlrpcpp -lboost_system-mt -lboost_filesystem-mt -lboost_thread-mt -Wl,-rpath,/opt/ros/fuerte/lib 
