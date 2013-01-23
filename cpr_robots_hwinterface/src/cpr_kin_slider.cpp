@@ -33,7 +33,7 @@
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
 // Created on: 	Jan 12th, 2013
-// Last Update:	Jan 21st, 2013
+// Last Update:	Jan 23st, 2013
 
 
 
@@ -67,17 +67,17 @@ namespace cpr_robots{
 	//*************************************************************************************
 	CPRKinSlider::CPRKinSlider(){
 
-		jointID_[0] = 0x02;				// standard configuration
-		jointID_[1] = 0x04;
-		jointID_[2] = 0x06;
-		jointID_[3] = 0x08;
+		jointID_[0] = 0x02;	// back left		// standard configuration for the slider, looking in forward-direction
+		jointID_[1] = 0x04;	// back right		// the front is where the CPR print is, the back is where the main switch is
+		jointID_[2] = 0x06;	// front left
+		jointID_[3] = 0x08;	// front right
 
-		length_ = 0.3;				// values for Slider 100 and 150
+		length_ = 0.3;					// values for Slider 100 and 150
 		width_ = 0.270;
 		diameter_ = 0.154;				// value for Slider 150 only
 
-		double max_vel = 123.0;				// velocity from -123 to 123
-		double rpm_at_max_vel = 0.535;			// due to gear ratio and motor characteristics 
+		double max_vel = 123.0;				// velocity from -123 to 123 (one byte)
+		double rpm_at_max_vel = 0.56;			// due to gear ratio and motor characteristics 
 		double mps_at_max_vel = rpm_at_max_vel * diameter_ * 3.141;
 		scale_translation_ =  max_vel / mps_at_max_vel;
 
@@ -253,14 +253,17 @@ namespace cpr_robots{
 			int l = 0;
 			char d[8];
 			int err = 0;
-			int curr = 0;		
+			double curr = 0.0;		
 			for(int i=0; i<4; i++){
 				itf_.getLastMessage(jointID_[0]+1, &l, d);
 				err =  err | d[0];
-			 	curr += d[4];
-			}
+			 	curr += 25.0 + 7.8 * (double)d[4];			// Current in mA:  
+											// Always 25 mA for the electronics
+											// plus motors: scale: 1050 mA = 135 tics --> 7.8
+											// computer not included
+ 			}	
 			updatePosition(msg);
-			ROS_INFO("Vel: %.3lf %.3lf %.3lf - Err: %d Curr: %d mA - Pos: %.3lf %.3lf %.3lf", 
+			ROS_INFO("Vel: %.3lf %.3lf %.3lf - Err: %d Curr: %.0lf mA - Pos: %.3lf %.3lf %.3lf", 
 				x, y, a, err, curr, 
 				pos_current_.position.x, 
 				pos_current_.position.y, 
