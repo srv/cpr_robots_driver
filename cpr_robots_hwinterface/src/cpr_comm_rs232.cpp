@@ -119,7 +119,7 @@ void readLoop(void * context )
 	{ 
 		io_service io;
 		const char *PORT = COMPORT;
-		serial_port_base::baud_rate baud_option(115200);
+		serial_port_base::baud_rate baud_option(460800);
 		flag_connected_ = false;
 		string s;
 		try{
