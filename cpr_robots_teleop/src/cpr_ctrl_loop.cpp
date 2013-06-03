@@ -96,7 +96,7 @@ namespace cpr_robots{
 		puts("Starting Teleop Control Loop");
   		puts("---------------------------");
 
-		double scale_Trans = 0.05;
+		double scale_Trans = 0.4;
 		double scale_Ori = 0.5;
 
  	 	for(;;)
@@ -119,7 +119,7 @@ namespace cpr_robots{
 			   	       
 
 			// the values are slowly decreasing when there is no keyboard input
-			double dec_Trans = 0.02;
+			double dec_Trans = 0.2;
 			double dec_Ori = 0.1;
 			if(twist_Tmp.linear.x == 0.0){					// only if no new command 
 				if(cmd_slider_velocities.linear.x >= dec_Trans)		// if bigger than bias

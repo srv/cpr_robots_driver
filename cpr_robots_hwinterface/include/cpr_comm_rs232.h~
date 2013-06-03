@@ -86,7 +86,7 @@ class CPRCommRS232{
 
 	public:
 
-		boost::asio::serial_port *port; 		/**< the serial port this instance is connected to */
+		boost::asio::serial_port *port_; 		/**< the serial port this instance is connected to */
 		bool flag_connected_;				/**< flag regarding the connection status  */
 	
 		CPRCommRS232();

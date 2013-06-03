@@ -119,11 +119,11 @@ void readLoop(void * context )
 	{ 
 		io_service io;
 		const char *PORT = COMPORT;
-		serial_port_base::baud_rate baud_option(115200);
+		serial_port_base::baud_rate baud_option(460800);
 		flag_connected_ = false;
 		string s;
 		try{
-			port_ = new serial_port_(io);
+			port_ = new serial_port(io);
 			port_->open(PORT);				// open the com port_
 			port_->set_option(baud_option); 			// set the baud rate
 

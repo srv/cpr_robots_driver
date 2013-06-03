@@ -82,6 +82,7 @@ class CPRCommRS232{
 
 		msg msg_buffer_[256];				/**< Storage for the last CAN message of IDs 0 to 255  */			
 		
+		msg nextOutMsg;		
 
 
 	public:

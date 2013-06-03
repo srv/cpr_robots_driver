@@ -62,6 +62,9 @@ CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: ../include/cpr_kin_slider.h
 CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: ../src/cpr_kin_slider.cpp
 CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: /opt/ros/fuerte/include/XmlRpcDecl.h
 CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: /opt/ros/fuerte/include/XmlRpcValue.h
+CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: /opt/ros/fuerte/include/geometry_msgs/Point.h
+CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: /opt/ros/fuerte/include/geometry_msgs/Pose.h
+CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: /opt/ros/fuerte/include/geometry_msgs/Quaternion.h
 CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: /opt/ros/fuerte/include/geometry_msgs/Twist.h
 CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: /opt/ros/fuerte/include/geometry_msgs/Vector3.h
 CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o: /opt/ros/fuerte/include/ros/advertise_options.h

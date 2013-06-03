@@ -227,6 +227,7 @@ namespace cpr_robots{
 			v = 127.0 + vel[i];
 			if(v > 250.0) v = 250.0;
 			if(v < 7.0) v = 7.0;
+			ROS_INFO("%lf", v);
 			data[1] = (char)((int)v); 
 			res = itf_.sendMsg(id, len, data);
 			ros::Duration(0.005).sleep();
@@ -250,6 +251,7 @@ namespace cpr_robots{
 
 		if(itf_.getConnectionStatus()){			// send only, if the interface is ok
 			setVelocities(&vel_joint[0]);
+
 			int l = 0;
 			char d[8];
 			int err = 0;
@@ -263,8 +265,13 @@ namespace cpr_robots{
 											// computer not included
  			}	
 			updatePosition(msg);
-			ROS_INFO("Vel: %.3lf %.3lf %.3lf - Err: %d Curr: %.0lf mA - Pos: %.3lf %.3lf %.3lf", 
-				x, y, a, err, curr, 
+/*			ROS_INFO("Vel: %.3lf %.3lf %.3lf - Err: %d Curr: %.0lf mA - Pos: %.3lf %.3lf %.3lf", 
+			x, y, a, err, curr, 
+				pos_current_.position.x, 
+				pos_current_.position.y, 
+				pos_current_.orientation.z);
+*/			ROS_INFO("Joints: %.2lf %.2lf %.2lf %.2lf - Err: %d Curr: %.0lf mA - Pos: %.3lf %.3lf %.3lf", 
+			vel_joint[0], vel_joint[1], vel_joint[2], vel_joint[3], err, curr, 
 				pos_current_.position.x, 
 				pos_current_.position.y, 
 				pos_current_.orientation.z);

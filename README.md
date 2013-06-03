@@ -4,7 +4,7 @@ cpr_robots_driver
 ROS stack to drive the CPR robots Slider and Mover4, packages cpr_robots_hwinterface and cpr_robots_teleop 
 BSD license.
 
---> Attention! Current version does not support communication with Checksum to the USB2CAN bridge. Will be updated in the next days. April 21st, 2013
+--> Attention! Current version does not support communication with Checksum to the USB2CAN bridge. Will be updated! 
 
 Current Version
 -----------------

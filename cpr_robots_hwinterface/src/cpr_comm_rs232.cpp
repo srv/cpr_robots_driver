@@ -61,11 +61,11 @@ void readLoop(void * context )
 
 	CPRCommRS232 *ctx;
 	ctx = (CPRCommRS232*)context;
-    	char bu[10];
-    	char buffer[10];
+    	char bu[11];
+    	char buffer[11];
     	int bufferCnt = 0;
 
-	for(int i=0; i<10; i++)
+	for(int i=0; i<11; i++)
 		buffer[i] = 0x00;
 
     	while (true)
@@ -90,11 +90,11 @@ void readLoop(void * context )
 				buffer[bufferCnt] = bu[0];				// store the char
 				bufferCnt++;
 
-				if(bufferCnt == 10){					// when there are 10 chars
+				if(bufferCnt == 11){					// when there are 10 chars
 					ctx->evaluateBuffer(buffer);			// the message is complete
 					bufferCnt = 0;
 
-					for(int i=0; i<10; i++)
+					for(int i=0; i<11; i++)
 						buffer[i] = 0x00;
 				}
 
@@ -171,15 +171,22 @@ void readLoop(void * context )
 	// send a CAN message
 	int CPRCommRS232::sendMsg(int id, int length, char data[])
 	{
-		unsigned char commands[10] = {16, 4, 4, 125, 125, 0,0,0,0,0};
+		unsigned char commands[11] = {16, 4, 4, 125, 125, 0,0,0,0,0,18};
+		int sum = 0;
 
 		commands[0] = id;
 		commands[1] = length;
 		for(int i=0; i<8; i++)
 			commands[2+i] = data[i];
 
+		// Build Testbyte
+		for(int i=0; i<10; i++)
+			sum += commands[i];
+		sum = sum % 256;
+		commands[10] = sum; 
+
 		if(flag_connected_)
-			boost::asio::write(*port_, boost::asio::buffer(commands, 10));
+			boost::asio::write(*port_, boost::asio::buffer(commands, 11));
 
 		//ROS_INFO("SendMsg: %d %d - %d %d %d %d %d %d %d %d", (int)commands[0], (int)commands[1], (int)commands[2], (int)commands[3],(int)commands[4] ,
 		//	(int)commands[5],(int)commands[6],(int)commands[7],(int)commands[8],(int)commands[9]) ;

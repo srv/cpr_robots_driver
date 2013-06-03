@@ -63,6 +63,9 @@ CMakeFiles/CPRKinSlider.dir/src/cpr_kin_slider.o
  /home/crm/ros_workspace/cpr_robots_driver/cpr_robots_hwinterface/src/cpr_kin_slider.cpp
  /opt/ros/fuerte/include/XmlRpcDecl.h
  /opt/ros/fuerte/include/XmlRpcValue.h
+ /opt/ros/fuerte/include/geometry_msgs/Point.h
+ /opt/ros/fuerte/include/geometry_msgs/Pose.h
+ /opt/ros/fuerte/include/geometry_msgs/Quaternion.h
  /opt/ros/fuerte/include/geometry_msgs/Twist.h
  /opt/ros/fuerte/include/geometry_msgs/Vector3.h
  /opt/ros/fuerte/include/ros/advertise_options.h
