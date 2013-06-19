@@ -28,7 +28,7 @@
   <buildtool_depend>catkin</buildtool_depend>
 
   <run_depend>cpr_robots_comm_rs232</run_depend>
-  <!--run_depend>cpr_robots_hwinterface</run_depend-->
+  <run_depend>cpr_robots_hwinterface</run_depend>
   <!--run_depend>cpr_robots_teleop</run_depend-->
 
   <export>
