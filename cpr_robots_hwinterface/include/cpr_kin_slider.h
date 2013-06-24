@@ -49,7 +49,7 @@
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Pose.h>
 
-#include <cpr_comm_rs232.h>
+#include <cpr_robots_comm_rs232.h>
 
 
 namespace cpr_robots{
