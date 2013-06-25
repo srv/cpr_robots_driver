@@ -1,7 +1,7 @@
 /*********************************************************************
  * Software License Agreement (BSD License)
  *
- *  Copyright (c) 2012, Commonplace Robotics GmbH
+ *  Copyright (c) 2012-13, Commonplace Robotics GmbH
  *  http://www.commonplacerobotics.com
  *  All rights reserved.
  *
@@ -32,104 +32,43 @@
  *  ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  *  POSSIBILITY OF SUCH DAMAGE.
  *********************************************************************/
-// Created on: 	Jan 12th, 2013
-// Last Update:	
 
+#ifndef CPRCOMMRS232_H
+#define CPRCOMMRS232_H
 
-#ifndef cpr_robots_driver_comm_rs232_H
-#define cpr_robots_driver_comm_rs232_H
-
-#include <termios.h>
-#include <signal.h>
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <ros/ros.h>
-#include <boost/asio.hpp>
 #include <boost/filesystem.hpp>
 #include <boost/thread.hpp>
+#include <boost/asio.hpp>
 
+// Representation of a CAN bus message
+typedef struct msg{
+	int id;						// message id
+	int length;					// length of data part
+	unsigned char data[8];		// data
+	long time;					// receive time
+} CANMessage;
 
-
-namespace cpr_robots{
-
-//* Struct to store a CAN message with ID, time stamp and data array
-/**
-*/
-struct msg{
-	int id;				// message id
-	int length;			// length of data part
-	char data[8];			// data
-	long time;			// receive time
-};
-
-
-//* Interface to read / write the CAN bus with the Commonplace Robotics USB2CAN bridge
-/**
-* The USB2CAN bridge is an interface to connect a PC via USB to a CAN field bus.
-* The bridge connects via the FTDI virtual com port as a serial port.
-* It sends received CAN messages as 10 char messages to the PC.
-* The PC sends CAN messages as 10 char messages to the bridge, the bridge forwards it to the CAN bus.
-*
-* The standard port is defined as /dev/ttyUSB0
-* If the CAN bridge connects on another port this has to be corrected in the .cpp file
-* Baud rates: 115.200 in the serial line, 500 kb/s on the CAN 
-*/
-class CPRCommRS232{
-
-	private:
-
-		msg msg_buffer_[256];				/**< Storage for the last CAN message of IDs 0 to 255  */			
-		
-		msg nextOutMsg;		
-
-
+class CPRCommRS232
+{
 	public:
-
-		boost::asio::serial_port *port_; 		/**< the serial port this instance is connected to */
-		bool flag_connected_;				/**< flag regarding the connection status  */
-	
 		CPRCommRS232();
-		~CPRCommRS232();
-
-		/*!
-	    	* \brief	Connects the USB2CAN bridge 
-		*/
-		int connect();
-
-		/*!
-	    	* \brief	Disconnects the USB2CAN bridge 
-		*/		
-		int disconnect();
+		bool Connect(const std::string& portst);
+		bool Disconnect(void);
 		
-		/*!
-	    	* \brief	Returns the connection status
-		*/
-		int getConnectionStatus();
-
-		/*!
-	    	* \brief	Sends a CAN message to the bus
-		*/
-		int sendMsg(int id, int length, char data[]);
+		void WriteMsg(int id, int length, unsigned char* data);
+		void GetMsg(int id, int *length, unsigned char* data);
+	private:
+		CANMessage msgBuffer[256];
+		bool active;					// Remains true while this object is still operating
+		boost::asio::serial_port *port; // The serial port this instance is connected to
+		boost::mutex mutex;
 		
-		/*!
-	    	* \brief	Provides the last message that was received with this CAN ID
-		*/	
-		int getLastMessage(int id, int *length, char *data);
-		
-		/*!
-	    	* \brief	Evaluates a 1 char test array to a msg structure
-		*/
-		int evaluateBuffer(char* buf);
-
-
+		int EvaluateBuffer(unsigned char* buf);
+		void readLoop();
 };
-
-
-
-}
-
-
 
 #endif

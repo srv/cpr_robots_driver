@@ -24,3 +24,11 @@ target_link_libraries(cpr_robots_comm_rs232
    ${catkin_LIBRARIES}
    ${Boost_LIBRARIES}
 )
+
+add_executable(test_serial src/test_serial.cpp)
+target_link_libraries(test_serial
+   ${catkin_LIBRARIES}
+   ${Boost_LIBRARIES}
+   cpr_robots_comm_rs232
+)
+
