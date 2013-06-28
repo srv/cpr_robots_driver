@@ -203,7 +203,7 @@ namespace cpr_robots
 			Wait(5);
 		}
 
-		//ROS_INFO("[CPRSlider] Setting velocities: %.2i %.2i %.2i %.2i", vels[0], vels[1], vels[2], vels[3]);
+		ROS_DEBUG("[CPRSlider] Setting velocities: %.2i %.2i %.2i %.2i", vels[0], vels[1], vels[2], vels[3]);
 	}
 
 	void CPRSlider::SerialTimerCallback(const ros::TimerEvent& e)
@@ -253,7 +253,7 @@ namespace cpr_robots
 		currTwist.linear.y = ytotal;
 		currTwist.angular.z = thtotal;
 
-		//ROS_INFO("[CPRSlider] Twist velocities: %.2f m/s %.2f m/s %.2f rad/s", currTwist.linear.x, currTwist.linear.y, currTwist.angular.z);
+		ROS_DEBUG("[CPRSlider] Twist velocities: %.2f m/s %.2f m/s %.2f rad/s", currTwist.linear.x, currTwist.linear.y, currTwist.angular.z);
 
 		double velocities[4];
 		InvKin(currTwist, velocities);
@@ -272,7 +272,7 @@ namespace cpr_robots
 			current += 25.0 + 7.8 * (double)response[4];
 		}
 		voltage = 6.37 + (0.033 * (response[6]));
-		//ROS_INFO("[CPRSlider] Error Codes: %i %i %i %i, Voltage: %f V, Current: %f mA", errors[0], errors[1], errors[2], errors[3], voltage, current);
+		ROS_DEBUG("[CPRSlider] Error Codes: %i %i %i %i, Voltage: %f V, Current: %f mA", errors[0], errors[1], errors[2], errors[3], voltage, current);
 
 		if (pPrintErrors) {
 			ProcessErrorCodes(errors);
@@ -413,7 +413,8 @@ namespace cpr_robots
 	}
 
 	//*************************************************************************************
-	void CPRSlider::UpdatePosition(const geometry_msgs::Twist::ConstPtr& vel_cart){
+	void CPRSlider::UpdatePosition(const geometry_msgs::Twist::ConstPtr& vel_cart)
+	{
 
 /*		double duration = 0.1;				// preset at 10 Hz. But this could be more precise...		
 
@@ -432,5 +433,6 @@ namespace cpr_robots
 		pos_current_.orientation.z += rz_local * duration;
 		
 		return;*/
+
 	}
 }
