@@ -16,5 +16,8 @@ ${catkin_INCLUDE_DIRS}
 ${Boost_INCLUDE_DIRS}
 )
 
-add_executable(CPRKinSlider src/cpr_kin_slider.cpp)
-target_link_libraries(CPRKinSlider ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+add_library(CPRSlider src/cpr_slider.cpp)
+target_link_libraries(CPRSlider ${catkin_LIBRARIES} ${Boost_LIBRARIES})
+
+add_executable(CPRSlider_node src/cpr_slider_node.cpp)
+target_link_libraries(CPRSlider_node ${catkin_LIBRARIES} ${Boost_LIBRARIES} CPRSlider)
