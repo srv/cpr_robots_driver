@@ -48,7 +48,7 @@ void quit(int sig)
 
 int main(int argc, char** argv)
 {
-	ros::init(argc, argv, "CPR-Robots Control Loop");
+	ros::init(argc, argv, "cpr_teleopkb");
 	signal(SIGINT,quit);
 
 	cpr_robots::CPRCtrlLoop loop;
