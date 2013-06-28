@@ -48,6 +48,8 @@
 #include <ros/ros.h>
 #include <geometry_msgs/Twist.h>
 #include <geometry_msgs/Pose.h>
+#include <tf/transform_broadcaster.h>
+#include <nav_msgs/Odometry.h>
 
 #include <cpr_robots_comm_rs232.h>
 
@@ -76,17 +78,22 @@ class CPRSlider{
 		double scale_rotation_;					/** Factor to compute the velocity command */
 			
 		geometry_msgs::Pose pos_current_;		/** The current position in world coordinates */
-		geometry_msgs::Twist twist_current_;	/** Last twist received */
-		ros::Time twist_current_time_;			/** Time of the last twist received */
 		std::vector<geometry_msgs::Twist> twist_recv_;	/** Last twist message received */
 	  	ros::NodeHandle nh_;
 		ros::Subscriber sub_twist_slider_;
-		ros::Publisher odom_slider_pub;
+		ros::Publisher odom_slider_pub_;
 		ros::Timer serialTimer_;
+		tf::TransformBroadcaster odom_broadcaster_;
 		
-		CPRCommRS232 serial_;																/** The interface to the hardware  */
+		geometry_msgs::Twist twist_current_;	/** Last twist received */
+		ros::Time twist_current_time_;			/** Time of the last twist received */
+		geometry_msgs::Twist twist_sent_;		/** Last twist sent to the platform */
+		ros::Time twist_sent_time_;				/** Time of the last twist sent to the platform */
+		
+		CPRCommRS232 serial_;					/** The interface to the hardware  */
 
 		boost::mutex twist_mutex_;
+		boost::mutex twist_sent_mutex_;
 
 		// Node params
 		std::string pPort;
@@ -94,12 +101,16 @@ class CPRSlider{
 		double pMaxNoTwistTime;
 		int pPrintErrors;
 		double pPeriod;
+		std::string pOdomFrame;
+		std::string pBaseFrame;
+		int pPublishOdom;
+		int pPublishTf;
 		
 		void TwistCallback(const geometry_msgs::Twist::ConstPtr& msg); 						/** Scales the velocities and forwards them to the hardware */
 		void SerialTimerCallback(const ros::TimerEvent& e);									/** A timer for sending messages through the serial port */
 		void SetVelocities(double* vel); 													/** Forward the velocities to the CAN hardware */
 		void InvKin(const geometry_msgs::Twist& vel_cart, double* vel_joint);		/** Computes the joint values of the mecanum wheels from the velocities (m/s rad/s) */
-		void UpdatePosition(const geometry_msgs::Twist::ConstPtr& vel_cart);				/** Tracks the position in world coordinates */
+		void UpdatePosition(const ros::Time& time);		/** Tracks the position in world coordinates */
 		void Wait(int ms);																	/** Waits for ms miliseconds. We cannot use usleep */
 		void ProcessErrorCodes(int* errors);												/** Writes a message from the error codes */
 		void ClearTwistFilter();															/** Clears the average twist filter */

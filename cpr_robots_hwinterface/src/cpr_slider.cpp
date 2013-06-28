@@ -66,6 +66,9 @@ namespace cpr_robots
 		pos_current_.position.y = 0.0;
 		pos_current_.orientation.z = 0.0;
 
+		twist_current_time_ = ros::Time::now();
+		twist_sent_time_ = ros::Time::now();
+
 		ClearTwistFilter();
 
 		serial_.Connect(pPort);
@@ -78,7 +81,7 @@ namespace cpr_robots
 
 		serialTimer_ = nh_.createTimer(ros::Duration(pPeriod), &CPRSlider::SerialTimerCallback, this);
 		sub_twist_slider_ = nh_.subscribe<geometry_msgs::Twist>("cmd_vel", 1, &CPRSlider::TwistCallback, this);
-		odom_slider_pub = nh_.advertise<geometry_msgs::Pose>("poseSlider", 1);
+		odom_slider_pub_ = nh_.advertise<nav_msgs::Odometry>("odom", 1);
 	}
 	
 	CPRSlider::~CPRSlider()
@@ -104,6 +107,18 @@ namespace cpr_robots
 
 		nh_.param("send_period", pPeriod, 0.025);
 		ROS_INFO("[CPRSlider] Sending period: %f", pPeriod);
+		
+		nh_.param<std::string>("odom_frame", pOdomFrame, "odom");
+		ROS_INFO("[CPRSlider] Odom Frame: %s", pOdomFrame.c_str());
+		
+		nh_.param<std::string>("base_frame", pBaseFrame, "base_link");
+		ROS_INFO("[CPRSlider] Base Frame: %s", pBaseFrame.c_str());
+		
+		nh_.param("publish_odom", pPublishOdom, 1);
+		ROS_INFO("[CPRSlider] Publish Odom Messages: %i", pPublishOdom);
+		
+		nh_.param("publish_tf", pPublishTf, 1);
+		ROS_INFO("[CPRSlider] Publish Tf Messages: %i", pPublishTf);
 	}
 
 	void CPRSlider::Wait(int ms){
@@ -259,6 +274,15 @@ namespace cpr_robots
 		InvKin(currTwist, velocities);
 		SetVelocities(velocities);
 
+		// Updating position
+		ros::Time currTime = ros::Time::now();
+		UpdatePosition(currTime);
+
+		twist_sent_mutex_.lock();
+		twist_sent_ = currTwist;
+		twist_sent_time_ = currTime;
+		twist_sent_mutex_.unlock();
+
 		// Reading responses
 		unsigned char response[8];
 		int length;
@@ -412,27 +436,74 @@ namespace cpr_robots
 		}
 	}
 
-	//*************************************************************************************
-	void CPRSlider::UpdatePosition(const geometry_msgs::Twist::ConstPtr& vel_cart)
+	void CPRSlider::UpdatePosition(const ros::Time& time)
 	{
+		geometry_msgs::Twist twist_old;
+		ros::Time twist_old_time;
+		twist_sent_mutex_.lock();
+		twist_old = twist_sent_;
+		twist_old_time = twist_sent_time_;
+		twist_sent_mutex_.unlock();
 
-/*		double duration = 0.1;				// preset at 10 Hz. But this could be more precise...		
+		double dt = (time - twist_old_time).toSec();
+		double vx = twist_old.linear.x;
+		double vy = twist_old.linear.y;
+		double vth = twist_old.angular.z;
+		double th_current = pos_current_.orientation.z;
 
-		double x_local = vel_cart->linear.x;		// the velocities in the local coordinate system		
-		double y_local = vel_cart->linear.y;		
-		double rz_local = vel_cart->angular.z;		
+		// Compute odometry in a typical way given the velocities of the robot
+		double delta_x = (vx * cos(th_current) - vy * sin(th_current)) * dt;
+		double delta_y = (vx * sin(th_current) + vy * cos(th_current)) * dt;
+		double delta_th = vth * dt;
 
-		// rotate x and y to the current direction of the platform
-		double rz_current = pos_current_.orientation.z;			// not correct! this is a quaternion orientation! to be changed!
-		
-		double x_global = std::cos(rz_current) * x_local - std::sin(rz_current) * y_local; 	// rotation matrix for xy-plane
-		double y_global = std::sin(rz_current) * x_local + std::cos(rz_current) * y_local; 
+		pos_current_.position.x += delta_x;
+		pos_current_.position.y += delta_y;
+		pos_current_.orientation.z += delta_th;
 
-		pos_current_.position.x += x_global * duration;						// add the global velocites with the according time factor
-		pos_current_.position.y += y_global * duration;
-		pos_current_.orientation.z += rz_local * duration;
-		
-		return;*/
+		ROS_DEBUG("[CPRSlider] Current pos: %.2f %.2f %.2f\n", pos_current_.position.x, pos_current_.position.y, pos_current_.orientation.z);
 
+		// Since all odometry is 6DOF we'll need a quaternion created from yaw		
+		geometry_msgs::Quaternion odom_quat = tf::createQuaternionMsgFromYaw(pos_current_.orientation.z);
+
+		if (pPublishTf)
+		{		
+			// First, we'll publish the transform over tf
+			geometry_msgs::TransformStamped odom_trans;
+
+			odom_trans.header.stamp = time;
+			odom_trans.header.frame_id = pOdomFrame;
+			odom_trans.child_frame_id = pBaseFrame;
+
+			odom_trans.transform.translation.x = pos_current_.position.x;
+			odom_trans.transform.translation.y = pos_current_.position.y;
+			odom_trans.transform.translation.z = 0.0;
+			odom_trans.transform.rotation = odom_quat;
+
+			// Send the transform
+			odom_broadcaster_.sendTransform(odom_trans);
+		}
+
+		if (pPublishOdom)
+		{
+			// Next, we'll publish the odometry message over ROS
+			nav_msgs::Odometry odom;
+			odom.header.stamp = time;
+			odom.header.frame_id = pOdomFrame;
+
+			// Set the position
+			odom.pose.pose.position.x = pos_current_.position.x;
+			odom.pose.pose.position.y = pos_current_.position.y;
+			odom.pose.pose.position.z = 0.0;
+			odom.pose.pose.orientation = odom_quat;
+
+			// Set the velocity
+			odom.child_frame_id = pBaseFrame;
+			odom.twist.twist.linear.x = vx;
+			odom.twist.twist.linear.y = vy;
+			odom.twist.twist.angular.z = vth;
+
+			// Publish the message
+			odom_slider_pub_.publish(odom);
+		}
 	}
 }

@@ -1,11 +1,11 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(cpr_robots_hwinterface)
 
-find_package(catkin REQUIRED COMPONENTS cpr_robots_comm_rs232 roscpp geometry_msgs)
+find_package(catkin REQUIRED COMPONENTS cpr_robots_comm_rs232 roscpp geometry_msgs tf nav_msgs)
 find_package(Boost REQUIRED COMPONENTS filesystem thread)
 
 catkin_package(
-    CATKIN_DEPENDS cpr_robots_comm_rs232 roscpp geometry_msgs
+    CATKIN_DEPENDS cpr_robots_comm_rs232 roscpp geometry_msgs tf nav_msgs
     INCLUDE_DIRS include
 #    DEPENDS roslib roscpp std_msgs
 #    LIBRARIES 

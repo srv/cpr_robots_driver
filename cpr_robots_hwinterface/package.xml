@@ -21,10 +21,14 @@
   <build_depend>cpr_robots_comm_rs232</build_depend> 
   <build_depend>roscpp</build_depend> 
   <build_depend>geometry_msgs</build_depend> 
+  <build_depend>tf</build_depend> 
+  <build_depend>nav_msgs</build_depend> 
   
   <run_depend>cpr_robots_comm_rs232</run_depend>
   <run_depend>roscpp</run_depend> 
   <run_depend>geometry_msgs</run_depend>
+  <run_depend>tf</run_depend>
+  <run_depend>nav_msgs</run_depend>
 
   <export>
   </export>
