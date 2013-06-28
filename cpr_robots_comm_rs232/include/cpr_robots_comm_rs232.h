@@ -61,11 +61,13 @@ class CPRCommRS232
 		
 		void WriteMsg(int id, int length, unsigned char* data);
 		void GetMsg(int id, int *length, unsigned char* data);
+		void SetActive(bool act);
 	private:
 		CANMessage msgBuffer[256];
 		bool active;					// Remains true while this object is still operating
 		boost::asio::serial_port *port; // The serial port this instance is connected to
 		boost::mutex mutex;
+		boost::mutex mutex_active;
 		
 		int EvaluateBuffer(unsigned char* buf);
 		void readLoop();

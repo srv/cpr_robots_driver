@@ -84,7 +84,9 @@ bool CPRCommRS232::Disconnect()
 {
 	if(port->is_open()) 
 	{
+		mutex_active.lock();
 		active = false;
+		mutex_active.unlock();
 		port->close();
 		std::cout << "Port closed" << endl;
 	}
@@ -106,7 +108,12 @@ void CPRCommRS232::WriteMsg(int id, int length, unsigned char* data)
 	sum = sum % 256;
 	commands[10] = sum;
 
-	if (active) {
+	bool act;
+	mutex_active.lock();
+	act = active;
+	mutex_active.unlock();
+
+	if (act) {
 		size_t bytes = boost::asio::write(*port, boost::asio::buffer(commands, 11));
 	}
 }
@@ -143,10 +150,17 @@ int CPRCommRS232::EvaluateBuffer(unsigned char* buf)
 		mutex.unlock();
 		//cout << "Found good msg. ID: " << mid << ", Length: " << length << endl;
 	}else{
-		cerr << "Found bad messages" << endl;
+		//cerr << "Found bad messages" << endl;
 	}
 
 	return 0;
+}
+
+void CPRCommRS232::SetActive(bool act)
+{
+	mutex_active.lock();
+	active = act;
+	mutex_active.unlock();
 }
 
 void CPRCommRS232::readLoop()
@@ -166,8 +180,12 @@ void CPRCommRS232::readLoop()
 		 * Main Read loop: read one byte in a time
 		 * When a known sender is found the complete CAN message of 11 bytes is read
 		 */
-
-		if(active){
+		bool act;
+		mutex_active.lock();
+		act = active;
+		mutex_active.unlock();
+		if (act)
+		{
 			start = microsec_clock::universal_time();
 			boost::asio::read(*(port), boost::asio::buffer(bu, 1));
 			now = microsec_clock::universal_time();
@@ -192,6 +210,10 @@ void CPRCommRS232::readLoop()
 				}
 			}
 		}
+		else
+		{
+			break;
+		}
 	}
-	std::cout << "ReadLoop: finished" << std::endl;
+	//std::cout << "ReadLoop: finished" << std::endl;
 }

@@ -84,6 +84,7 @@ namespace cpr_robots
 	CPRSlider::~CPRSlider()
 	{
 		DisableMotors();
+		serial_.SetActive(false);
 		serial_.Disconnect();
 	}
 
@@ -120,7 +121,7 @@ namespace cpr_robots
 		}   
 	}
 
-	void CPRSlider:CPRSlider:::ClearTwistFilter()
+	void CPRSlider::ClearTwistFilter()
 	{
 		twist_recv_.clear();
 		geometry_msgs::Twist firstTwist;
