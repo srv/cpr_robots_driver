@@ -63,7 +63,8 @@ namespace cpr_robots
 		scale_rotation_ = complete_rotation / (2.0 * 3.141) * scale_translation_;		
 		
 		double ab = (length_ + width_) / 2.0;
-		scale_fact_ = ab * scale_rotation_;
+		//scale_fact_ = ab * scale_rotation_;
+		scale_fact_ = ab * scale_translation_;
 
 		pos_current_.position.x = 0.0;
 		pos_current_.position.y = 0.0;
