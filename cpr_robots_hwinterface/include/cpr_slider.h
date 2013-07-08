@@ -76,6 +76,7 @@ class CPRSlider{
 		double diameter_;						/** The diameter of the wheels in m */
 		double scale_translation_;				/** Factor to compute the velocity command */
 		double scale_rotation_;					/** Factor to compute the velocity command */
+		double scale_fact_;						/** Final value for increment the velocity */
 			
 		geometry_msgs::Pose pos_current_;		/** The current position in world coordinates */
 		std::vector<geometry_msgs::Twist> twist_recv_;	/** Last twist message received */

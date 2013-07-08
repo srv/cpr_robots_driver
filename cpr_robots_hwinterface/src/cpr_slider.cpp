@@ -61,6 +61,9 @@ namespace cpr_robots
 
 		double complete_rotation = width_ * 3.141;	// Rotational speed given in rad/s
 		scale_rotation_ = complete_rotation / (2.0 * 3.141) * scale_translation_;		
+		
+		double ab = (length_ + width_) / 2.0;
+		scale_fact_ = ab * scale_rotation_;
 
 		pos_current_.position.x = 0.0;
 		pos_current_.position.y = 0.0;
@@ -315,7 +318,7 @@ namespace cpr_robots
 	{		
 		// naming:
 		// The front of the slider is the empty side, the back is the side with the main switch
-		// Front left: vel[0] inverted		Front right vel[1]	(looking from behind)		
+		// Front left: vel[0] inverted		Front right: vel[1]	(looking from behind)		
 		// Back left: vel[2] inverted		Back left: vel[3]
 
 		// forward: all four wheels 
@@ -331,10 +334,10 @@ namespace cpr_robots
 		vel_joint[3] += -scale_translation_ * vel_cart.linear.y;
 
 		// rotate: 
-		vel_joint[0] +=  scale_rotation_ * vel_cart.angular.z;
-		vel_joint[1] +=  scale_rotation_ * vel_cart.angular.z;
-		vel_joint[2] +=  scale_rotation_ * vel_cart.angular.z;
-		vel_joint[3] +=  scale_rotation_ * vel_cart.angular.z;
+		vel_joint[0] +=  scale_fact_ * vel_cart.angular.z;
+		vel_joint[1] +=  scale_fact_ * vel_cart.angular.z;
+		vel_joint[2] +=  scale_fact_ * vel_cart.angular.z;
+		vel_joint[3] +=  scale_fact_ * vel_cart.angular.z;
 	} 
 
 	void CPRSlider::ProcessErrorCodes(int* errors)
