@@ -310,8 +310,31 @@ namespace cpr_robots
 	void CPRSlider::TwistCallback(const geometry_msgs::Twist::ConstPtr& msg)
 	{
 		twist_mutex_.lock();
+		geometry_msgs::Twist past_twist = twist_current_;
+		ros::Time past_twist_time = twist_current_time_;
 		twist_current_ = *msg;
 		twist_current_time_ = ros::Time::now();
+
+		// Limiting the accelerations.
+		double dt = (twist_current_time_ - past_twist_time).toSec();
+		double acc = 0.01;
+		if ((fabs(twist_current_.linear.x - past_twist.linear.x) / dt) > acc)
+		{
+			if (twist_current_.linear.x > past_twist.linear.x) twist_current_.linear.x = past_twist.linear.x + acc;
+			else twist_current_.linear.x = past_twist.linear.x - acc;
+		}
+
+		if ((fabs(twist_current_.linear.y - past_twist.linear.y) / dt) > acc)
+		{
+			if (twist_current_.linear.y > past_twist.linear.y) twist_current_.linear.y = past_twist.linear.y + acc;
+			else twist_current_.linear.y = past_twist.linear.y - acc;
+		}
+		
+		if ((fabs(twist_current_.angular.z - past_twist.angular.z) / dt) > acc)
+		{
+			if (twist_current_.angular.z > past_twist.angular.z) twist_current_.angular.z = past_twist.angular.z + acc;
+			else twist_current_.angular.z = past_twist.angular.z - acc;
+		}
 		twist_mutex_.unlock();
 	}
 
